@@ -20,7 +20,7 @@ public class Datos {
     //Query for Insert 
     private final String SQLINSERT = "INSERT INTO productos (nombre,precio,existencias) values (?,?,?)";
     //Query for Select
-    private final String SQLSELECT = "select * from productos";
+    private final String SQLSELECT = "select * from productos where estado>0";
     //PreparedStatement
     private PreparedStatement ps ; 
     private final conexion con; 
@@ -106,9 +106,9 @@ public class Datos {
         String SQL; 
         try{
             Integer.parseInt(prm);
-            SQL="SELECT * FROM productos WHERE id="+prm;
+            SQL="SELECT * FROM productos WHERE id='"+prm+"'AND estado>0";
         }catch(NumberFormatException ex){
-            SQL="SELECT * FROM productos WHERE nombre like'"+prm+"%'";
+            SQL="SELECT * FROM productos WHERE nombre like'"+prm+"%' AND estado>0";
         }
         try{
             titulos();
@@ -159,6 +159,27 @@ public class Datos {
             con.close();
         }
         return 0; 
+    }
+    
+    
+    public int Delete (String id){
+        int resultado = 0; 
+      String SQLUPDATE = "UPDATE productos set estado=0 where id= "+id;
+        try{
+            ps = con.getconexion().prepareStatement(SQLUPDATE);
+            resultado = ps.executeUpdate();
+            
+            if (resultado > 0){
+                JOptionPane.showMessageDialog(null, "Registro Eliminado");
+            }
+        }catch(HeadlessException | SQLException ex){
+            JOptionPane.showMessageDialog(null, "Fallo al Eliminar");
+            System.err.println(ex);
+        }finally{
+            ps = null; 
+            con.close();
+        }
+        return resultado; 
     }
     
     
