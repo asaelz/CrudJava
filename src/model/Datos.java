@@ -101,9 +101,49 @@ public class Datos {
         return DT; 
     }
     
+       //Metodo para mostrar datos
+    public DefaultTableModel Search(String prm){
+        String SQL; 
+        try{
+            Integer.parseInt(prm);
+            SQL="SELECT * FROM productos WHERE id="+prm;
+        }catch(NumberFormatException ex){
+            SQL="SELECT * FROM productos WHERE nombre like'"+prm+"%'";
+        }
+        try{
+            titulos();
+            //Obtenemos conexion y pasamos el query 
+            ps = con.getconexion().prepareStatement(SQL);
+            //Resulset Execute
+            RS = ps.executeQuery();
+            
+            //arreglo para almacenar las filas 
+            Object[] filas = new Object[4];
+            //Mientras RS tenga un siguiente 
+            while (RS.next()){
+                filas[0] = RS.getInt(1);
+                filas[1] = RS.getString(2);
+                filas[2] = RS.getInt(3);
+                filas[3] = RS.getInt(4);
+                //Se añade los row 
+                DT.addRow(filas);
+            }
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error al insertar filas");
+        }finally{
+            ps= null; 
+            RS = null; 
+            con.close();
+        }
+        return DT; 
+    }
+ 
+    
+    
+   
     
     public int Update(int id, String nombre, int precio, int existencia){
-        String SQLUPDATE = "UPDATE productos set nombre='"+nombre+"',set precio='"+precio+"', set existencias='"+existencia+"' WHERE id="+id;
+        String SQLUPDATE = "UPDATE productos set nombre='"+nombre+"',precio='"+precio+"',existencias='"+existencia+"' WHERE id="+id;
         try{
             ps = con.getconexion().prepareStatement(SQLUPDATE);
             int resultado = ps.executeUpdate();
@@ -112,11 +152,15 @@ public class Datos {
                 JOptionPane.showMessageDialog(null, "Registro Exitoso");
             }
         }catch(HeadlessException | SQLException ex){
-            JOptionPane.showMessageDialog(null, "Fallo al registrar");
+            JOptionPane.showMessageDialog(null, "Fallo al actualizar");
+            System.err.println(ex);
         }finally{
             ps = null; 
             con.close();
         }
         return 0; 
     }
+    
+    
+    
 }
