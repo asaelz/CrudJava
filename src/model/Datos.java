@@ -101,4 +101,22 @@ public class Datos {
         return DT; 
     }
     
+    
+    public int Update(int id, String nombre, int precio, int existencia){
+        String SQLUPDATE = "UPDATE productos set nombre='"+nombre+"',set precio='"+precio+"', set existencias='"+existencia+"' WHERE id="+id;
+        try{
+            ps = con.getconexion().prepareStatement(SQLUPDATE);
+            int resultado = ps.executeUpdate();
+            
+            if (resultado > 0){
+                JOptionPane.showMessageDialog(null, "Registro Exitoso");
+            }
+        }catch(HeadlessException | SQLException ex){
+            JOptionPane.showMessageDialog(null, "Fallo al registrar");
+        }finally{
+            ps = null; 
+            con.close();
+        }
+        return 0; 
+    }
 }
